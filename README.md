@@ -177,12 +177,36 @@ wget https://github.com/onitake/gsl-firmware/raw/master/firmware/rca/w101v2/firm
 sudo mkdir /lib/firmware/silead
 sudo mv firmware.fw /lib/firmware/silead/mssl1680.fw
 sudo mv SileadTouch.fw silead_ts.fw /lib/firmware/silead/
-```
+
+```Update python (Fedora uses dnf, I don't know Ubuntu's alternative, sorry)
+$ sudo dnf update
+
+$ sudo dnf install python3
+
+
+INSTALL PIP
+
+
+$ sudo dnf install python3-pip
+
+then use pip to install ATTRS
+
+$ python -Im pip install attrs
 
 The calibration settings can be added by creating the file `/etc/udev/rules.d/95-libinput.rules`
 with the following line:
 
 `ATTRS{name}=="silead_ts", ENV{LIBINPUT_CALIBRATION_MATRIX}="0.0 4.55 0.0 -2.5 0.0 1.01 0.0 0.0 1.0"`
+
+This is added by running this nano command:
+$ sudo nano /etc/udev/rules.d/95-libinput.rules
+
+Then pasting:
+ATTRS{name}=="silead_ts", ENV{LIBINPUT_CALIBRATION_MATRIX}="0.0 4.55 0.0 -2.5 0.0 1.01 0.0 0.0 1.0"
+
+Then hit Ctrl+o then ENTER to save
+
+Then Ctrl + X to close it
 
 Then restart the system for the changes to take effect.
 
@@ -215,6 +239,9 @@ You can confirm the calibration settings by doing it again.
    ```
    The touchscreen should be now calibrated; update the udev settings with the
    values displayed by `xlibinput_calibrator` for the `xinput` command.
+
+FOR ROTATION TO WORK: There will be a script and instructions to get the screen rotation to actually rotate the right way, currently it rotates one to the left if it's in either portrait mode, and one to the right if it's in either landscape (I think I got the rotations right, portraits and landscapes both are offset by one, and they are offset in different directions.. Two going right, two going left, seperated by Landscape or Portrait.
+
 
 ### Troubleshooting
 
