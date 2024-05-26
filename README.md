@@ -14,6 +14,12 @@ Bluetooth, audio and battery management. However, as of May 2024 there is
 [no working support for the cameras](https://askubuntu.com/questions/1250560/why-doesnt-my-camera-work-when-theres-a-kernel-module-for-the-driver)
 (i.e. the OV2680 sensor) yet.
 
+Make sure your bootloader settings are set to allow booting of Linux do this by:
+
+```
+Under the ADVANCED tab in the bios, go down to OS/B0M configuration ENTER
+On ISP PCI Device Selection hit ENTER and select the BOD3F0 option with your arrow keys, hit ENTER to select the BOD3F0 option. Then, Esc, Under Save and exit, save changes and exit, or, save changes, then go down to force boot your Linux install medium.
+```
 ## Debian
 
 Currently the latest Debian releases (11.x and 12.x) show several incompatibilities
@@ -178,14 +184,43 @@ sudo mkdir /lib/firmware/silead
 sudo mv firmware.fw /lib/firmware/silead/mssl1680.fw
 sudo mv SileadTouch.fw silead_ts.fw /lib/firmware/silead/
 ```
+## Update python
 
-The calibration settings can be added by creating the file `/etc/udev/rules.d/95-libinput.rules`
-with the following line:
+(Fedora uses dnf, I don't know Ubuntu's alternative, sorry)
+
+```
+$ sudo dnf update
+
+$ sudo dnf install python3
+
+```
+INSTALL PIP
+```
+
+$ sudo dnf install python3-pip
+
+then use pip to install ATTRS
+
+$ python -Im pip install attrs
+
+
+The calibration settings can be added by creating a file in this path `/etc/udev/rules.d/95-libinput.rules`
+containing the following line:
 
 `ATTRS{name}=="silead_ts", ENV{LIBINPUT_CALIBRATION_MATRIX}="0.0 4.55 0.0 -2.5 0.0 1.01 0.0 0.0 1.0"`
 
-Then restart the system for the changes to take effect.
+This file is made by running this nano command:
+$ sudo nano /etc/udev/rules.d/95-libinput.rules
 
+Then pasting in:
+ATTRS{name}=="silead_ts", ENV{LIBINPUT_CALIBRATION_MATRIX}="0.0 4.55 0.0 -2.5 0.0 1.01 0.0 0.0 1.0"
+
+Then hit Ctrl+o then ENTER to save
+
+Then Ctrl + X to close it
+
+Then restart the system for the changes to take effect.
+```
 ### Calibration process
 
 You can confirm the calibration settings by doing it again.
@@ -215,6 +250,9 @@ You can confirm the calibration settings by doing it again.
    ```
    The touchscreen should be now calibrated; update the udev settings with the
    values displayed by `xlibinput_calibrator` for the `xinput` command.
+
+FOR ROTATION TO WORK: There will be a script and instructions to get the screen rotation to actually rotate the right way, currently it rotates one to the left if it's in either portrait mode, and one to the right if it's in either landscape (I think I got the rotations right, portraits and landscapes both are offset by one, and they are offset in different directions.. Two going right, two going left, seperated by Landscape or Portrait.
+
 
 ### Troubleshooting
 
